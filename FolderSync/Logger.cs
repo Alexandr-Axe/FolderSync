@@ -14,6 +14,13 @@ public class Logger
 	{
         string line = $"{DateTime.Now:dd-MM-yyyy HH:mm:ss} {message}";
 		Console.WriteLine(line);
-        File.AppendAllText(logFilePath, line + Environment.NewLine);
+        try 
+        {
+            File.AppendAllText(logFilePath, line + Environment.NewLine); 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Logger ERROR: {ex.Message}");
+        }
     }
 }
