@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 
+/// <summary>
+/// Logs messages to both the console and a file.
+/// </summary>
 public class Logger
 {
 	private readonly string logFilePath;
@@ -10,6 +13,9 @@ public class Logger
 		this.logFilePath = logFilePath;
 	}
 
+    /// <summary>
+    /// Writes the log message to the console and the log file.
+    /// </summary>
 	public void Log(LogLevel level, string message) 
 	{
         string line = $"{DateTime.Now:dd-MM-yyyy HH:mm:ss} [{level}] {message}";

@@ -1,19 +1,27 @@
 ﻿using System;
 
+/// <summary>
+/// Handles the synchronisation loop and process.
+/// </summary>
 public class Synchroniser
 {
     private readonly SyncConfig config;
     private readonly Logger logger;
+    private readonly CancellationToken cancellationToken;
 
-    public Synchroniser(SyncConfig config, Logger logger)
+    public Synchroniser(SyncConfig config, Logger logger, CancellationToken cancellationToken)
 	{
         this.config = config;
         this.logger = logger;
+        this.cancellationToken = cancellationToken;
 	}
 
+    /// <summary>
+    /// Starts the main synchronisation loop.
+    /// </summary>
     public void Start() 
     {
-        for (int i = 0; i < 10; i++)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
@@ -28,6 +36,9 @@ public class Synchroniser
         logger.Log(LogLevel.INF, "Synchronisation stopped!");
     }
 
+    /// <summary>
+    /// Synchronises source and replica directories.
+    /// </summary>
     private void Synchronise() 
     {
         logger.Log(LogLevel.INF, "Synchronising...");
