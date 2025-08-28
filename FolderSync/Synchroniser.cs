@@ -27,15 +27,15 @@ public class Synchroniser
             }
             catch (Exception ex)
             {
-                logger.Log("ERROR: " + ex.Message);
+                logger.Log(LogLevel.ERR, ex.Message);
             }
             Thread.Sleep(SyncIntervalSeconds * 1000);
         }
-        logger.Log("Synchronisation stopped!");
+        logger.Log(LogLevel.INF, "Synchronisation stopped!");
     }
 
     private void Synchronise() 
     {
-        logger.Log("Synchronising...");
+        logger.Log(LogLevel.INF, "Synchronising...");
     }
 }

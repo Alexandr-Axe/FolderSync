@@ -10,9 +10,9 @@ public class Logger
 		this.logFilePath = logFilePath;
 	}
 
-	public void Log(string message) 
+	public void Log(LogLevel level, string message) 
 	{
-        string line = $"{DateTime.Now:dd-MM-yyyy HH:mm:ss} {message}";
+        string line = $"{DateTime.Now:dd-MM-yyyy HH:mm:ss} [{level}] {message}";
 		Console.WriteLine(line);
         try 
         {

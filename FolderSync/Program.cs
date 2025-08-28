@@ -11,13 +11,13 @@ string logfile = args[3];
 Logger logger = new Logger(logfile);
 Synchroniser sync = new Synchroniser(source, replica, interval, logfile, logger);
 
-logger.Log("FolderSync has booted up!");
-logger.Log("Arguments received:");
-logger.Log($"Source: {source}");
-logger.Log($"Replica: {replica}");
-logger.Log($"Interval: {interval}");
-logger.Log($"Logfile: {logfile}");
-logger.Log("Starting the program...");
+logger.Log(LogLevel.INF, "FolderSync has booted up!");
+logger.Log(LogLevel.DEB, "Arguments received:");
+logger.Log(LogLevel.DEB, $"Source: {source}");
+logger.Log(LogLevel.DEB, $"Replica: {replica}");
+logger.Log(LogLevel.DEB, $"Interval: {interval}");
+logger.Log(LogLevel.DEB, $"Logfile: {logfile}");
+logger.Log(LogLevel.INF, "Starting the program...");
 
 sync.Start();
 
