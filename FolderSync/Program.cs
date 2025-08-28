@@ -4,19 +4,21 @@
     return;
 }
 
-string source = args[0];
-string replica = args[1];
-int interval = int.Parse(args[2]);
-string logfile = args[3];
-Logger logger = new Logger(logfile);
-Synchroniser sync = new Synchroniser(source, replica, interval, logfile, logger);
+SyncConfig config = new SyncConfig {
+    SourcePath = args[0],
+    ReplicaPath = args[1],
+    SyncIntervalSeconds = int.Parse(args[2]),
+    LogFilePath = args[3]
+};
+Logger logger = new Logger(config.LogFilePath);
+Synchroniser sync = new Synchroniser(config, logger);
 
 logger.Log(LogLevel.INF, "FolderSync has booted up!");
 logger.Log(LogLevel.DEB, "Arguments received:");
-logger.Log(LogLevel.DEB, $"Source: {source}");
-logger.Log(LogLevel.DEB, $"Replica: {replica}");
-logger.Log(LogLevel.DEB, $"Interval: {interval}");
-logger.Log(LogLevel.DEB, $"Logfile: {logfile}");
+logger.Log(LogLevel.DEB, $"Source: {config.SourcePath}");
+logger.Log(LogLevel.DEB, $"Replica: {config.ReplicaPath}");
+logger.Log(LogLevel.DEB, $"Interval: {config.SyncIntervalSeconds}");
+logger.Log(LogLevel.DEB, $"Logfile: {config.LogFilePath}");
 logger.Log(LogLevel.INF, "Starting the program...");
 
 sync.Start();

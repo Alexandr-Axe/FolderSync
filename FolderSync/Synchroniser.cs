@@ -2,18 +2,12 @@
 
 public class Synchroniser
 {
-    public string SourcePath { get; set; }
-    public string ReplicaPath { get; set; }
-    public int SyncIntervalSeconds { get; set; }
-    public string LogFilePath { get; set; }
-    public Logger logger { get; set; }
+    private readonly SyncConfig config;
+    private readonly Logger logger;
 
-    public Synchroniser(string sourcePath, string replicaPath, int syncIntervalSeconds, string logFilePath, Logger logger)
+    public Synchroniser(SyncConfig config, Logger logger)
 	{
-        this.SourcePath = sourcePath;
-        this.ReplicaPath = replicaPath;
-        this.SyncIntervalSeconds = syncIntervalSeconds;
-        this.LogFilePath = logFilePath;
+        this.config = config;
         this.logger = logger;
 	}
 
@@ -29,7 +23,7 @@ public class Synchroniser
             {
                 logger.Log(LogLevel.ERR, ex.Message);
             }
-            Thread.Sleep(SyncIntervalSeconds * 1000);
+            Thread.Sleep(config.SyncIntervalSeconds * 1000);
         }
         logger.Log(LogLevel.INF, "Synchronisation stopped!");
     }
