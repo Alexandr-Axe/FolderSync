@@ -52,36 +52,59 @@ public class Synchroniser
         // All subfolders are handled the same way
 
         logger.Log(LogLevel.INF, "Starting directory synchronisation...");
-        SyncDir();
-        RemoveExtras();
+        SyncDir(config.SourcePath, config.ReplicaPath);
+        logger.Log(LogLevel.INF, "Deleting all extra files from replica...");
+        RemoveExtras(config.SourcePath, config.ReplicaPath);
         logger.Log(LogLevel.INF, "Directory synchronization completed.");
     }
 
-    private void SyncDir() 
+    private void SyncDir(string sourceDir, string replicaDir) 
     {
         string fileName = string.Empty;
         string replicaFile = string.Empty;
         string dirName = string.Empty;
         string replicaSubDir = string.Empty;
-        bool shouldCopy = false;
 
-        foreach (var file in Directory.GetFiles(config.SourcePath))
+        // Create directory if doesn't exist
+        if (!Directory.Exists(replicaDir))
         {
-            fileName = Path.GetFileName(file);
-            replicaFile = Path.Combine(config.ReplicaPath, fileName);
-            shouldCopy = !File.Exists(replicaFile) ||
-                File.GetLastWriteTimeUtc(file) != File.GetLastWriteTimeUtc(replicaFile);
+            Directory.CreateDirectory(replicaDir);
+            logger.Log(LogLevel.INF, $"Created directory: {replicaDir}");
+        }
 
-            if (shouldCopy)
+        // Copying files
+        foreach (var sourceFile in Directory.GetFiles(sourceDir))
+        {
+            fileName = Path.GetFileName(sourceFile);
+            replicaFile = Path.Combine(replicaDir, fileName);
+
+            // File doesn't exist
+            if (!File.Exists(replicaFile)) 
             {
-                File.Copy(file, replicaFile, true);
+                File.Copy(sourceFile, replicaFile, true);
+                logger.Log(LogLevel.INF, $"Created file: {fileName}");
+            }
+            // File was changed
+            else if (File.GetLastWriteTimeUtc(sourceFile) != File.GetLastWriteTimeUtc(replicaFile))
+            {
+                File.Copy(sourceFile, replicaFile, true);
                 logger.Log(LogLevel.INF, $"Updated file: {fileName}");
             }
+            // File is the same
             else logger.Log(LogLevel.WAR, $"Skipped file: {fileName}");
+        }
+
+        // Copying subdirectories
+        foreach (var sourceSubDir in Directory.GetDirectories(sourceDir))
+        {
+            dirName = Path.GetFileName(sourceSubDir);
+            replicaSubDir = Path.Combine(replicaDir, dirName);
+
+            SyncDir(sourceSubDir, replicaSubDir);
         }
     }
 
-    private void RemoveExtras() 
+    private void RemoveExtras(string sourceDir, string replicaDir) 
     {
 
     }
