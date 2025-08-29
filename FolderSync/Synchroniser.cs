@@ -68,8 +68,15 @@ public class Synchroniser
         // Create directory if doesn't exist
         if (!Directory.Exists(replicaDir))
         {
-            Directory.CreateDirectory(replicaDir);
-            logger.Log(LogLevel.INF, $"Created directory: {replicaDir}");
+            try
+            {
+                Directory.CreateDirectory(replicaDir);
+                logger.Log(LogLevel.INF, $"Created directory: {replicaDir}");
+            }
+            catch (Exception ex)
+            {
+                logger.Log(LogLevel.ERR, $"Failed to create directory {replicaDir}: {ex.Message}");
+            }
         }
 
         // Copying files
@@ -81,14 +88,28 @@ public class Synchroniser
             // File doesn't exist
             if (!File.Exists(replicaFile)) 
             {
-                File.Copy(sourceFile, replicaFile, true);
-                logger.Log(LogLevel.INF, $"Created file: {fileName}");
+                try
+                {
+                    File.Copy(sourceFile, replicaFile, true);
+                    logger.Log(LogLevel.INF, $"Created file: {fileName}");
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(LogLevel.ERR, $"Failed to create file {fileName}: {ex.Message}");
+                }
             }
             // File was changed
             else if (File.GetLastWriteTimeUtc(sourceFile) != File.GetLastWriteTimeUtc(replicaFile))
             {
-                File.Copy(sourceFile, replicaFile, true);
-                logger.Log(LogLevel.INF, $"Updated file: {fileName}");
+                try
+                {
+                    File.Copy(sourceFile, replicaFile, true);
+                    logger.Log(LogLevel.INF, $"Updated file: {fileName}");
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(LogLevel.ERR, $"Failed to update file {fileName}: {ex.Message}");
+                }
             }
             // File is the same
             else logger.Log(LogLevel.WAR, $"Skipped file: {fileName}");
@@ -117,8 +138,15 @@ public class Synchroniser
             sourceFile = Path.Combine(sourceDir, fileName);
             if (!File.Exists(sourceFile))
             {
-                File.Delete(replicaFile);
-                logger.Log(LogLevel.INF, $"Removed file: {fileName}");
+                try
+                {
+                    File.Delete(replicaFile);
+                    logger.Log(LogLevel.INF, $"Removed file: {fileName}");
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(LogLevel.ERR, $"Failed to remove file {fileName}: {ex.Message}");
+                }
             }
         }
 
@@ -128,8 +156,15 @@ public class Synchroniser
             sourceSubDir = Path.Combine(sourceDir, dirName);
             if (!Directory.Exists(sourceSubDir))
             {
-                Directory.Delete(replicaSubDir, true);
-                logger.Log(LogLevel.INF, $"Removed directory: {dirName}");
+                try
+                {
+                    Directory.Delete(replicaSubDir, true);
+                    logger.Log(LogLevel.INF, $"Removed directory: {dirName}");
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(LogLevel.ERR, $"Failed to remove directory {dirName}: {ex.Message}");
+                }
             }
             else
                 RemoveExtras(sourceSubDir, replicaSubDir);
