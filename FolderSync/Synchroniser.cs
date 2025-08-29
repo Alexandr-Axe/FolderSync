@@ -106,6 +106,33 @@ public class Synchroniser
 
     private void RemoveExtras(string sourceDir, string replicaDir) 
     {
+        string fileName = string.Empty;
+        string sourceFile = string.Empty;
+        string dirName = string.Empty;
+        string sourceSubDir = string.Empty;
 
+        foreach (var replicaFile in Directory.GetFiles(replicaDir))
+        {
+            fileName = Path.GetFileName(replicaFile);
+            sourceFile = Path.Combine(sourceDir, fileName);
+            if (!File.Exists(sourceFile))
+            {
+                File.Delete(replicaFile);
+                logger.Log(LogLevel.INF, $"Removed file: {fileName}");
+            }
+        }
+
+        foreach (var replicaSubDir in Directory.GetDirectories(replicaDir))
+        {
+            dirName = Path.GetFileName(replicaSubDir);
+            sourceSubDir = Path.Combine(sourceDir, dirName);
+            if (!Directory.Exists(sourceSubDir))
+            {
+                Directory.Delete(replicaSubDir, true);
+                logger.Log(LogLevel.INF, $"Removed directory: {dirName}");
+            }
+            else
+                RemoveExtras(sourceSubDir, replicaSubDir);
+        }
     }
 }
